@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@lucide/vue": "^1.43.0",
     "csv-parser": "^3.2.1",
     "fuse.js": "^7.5.0",
     "ky": "^2.1.0",
