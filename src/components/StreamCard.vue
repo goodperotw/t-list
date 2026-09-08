@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Stream } from '../types'
+import { ExternalLink } from '@lucide/vue'
 
 const props = defineProps<{ stream: Stream }>()
 
@@ -74,6 +75,7 @@ function typeColor(type: string): string {
         <span class="truncate text-gray-600 group-hover:text-gray-900">
           {{ u.title !== u.type ? u.title : '' }}
         </span>
+        <ExternalLink class="ml-auto size-4 shrink-0 text-gray-400 group-hover:text-gray-600" />
       </a>
     </div>
     <p v-else class="text-sm text-gray-400">無連結</p>
