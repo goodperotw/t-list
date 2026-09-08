@@ -71,23 +71,30 @@ onMounted(fetchAndParse)
           共 {{ filteredData.length }} 筆
         </p>
 
-        <div
+        <TransitionGroup
           v-if="filteredData.length"
+          tag="div"
+          name="card"
           class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
         >
           <StreamCard
-            v-for="(stream, i) in filteredData"
-            :key="i"
+            v-for="stream in filteredData"
+            :key="stream.streamTitle + stream.streamedAt"
             :stream="stream"
           />
-        </div>
+        </TransitionGroup>
 
-        <div
+        <Transition
           v-else
-          class="rounded-xl border border-dashed border-gray-300 p-16 text-center text-gray-400"
+          name="fade"
+          appear
         >
-          沒有符合條件的直播
-        </div>
+          <div
+            class="rounded-xl border border-dashed border-gray-300 p-16 text-center text-gray-400"
+          >
+            沒有符合條件的直播
+          </div>
+        </Transition>
       </template>
     </main>
   </div>

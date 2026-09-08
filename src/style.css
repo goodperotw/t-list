@@ -1,1 +1,21 @@
 @import "tailwindcss";
+
+.card-enter-from,
+.card-leave-to {
+  opacity: 0;
+  transform: translateY(8px);
+}
+.card-enter-active,
+.card-leave-active {
+  transition: opacity 200ms ease, transform 200ms ease;
+}
+.card-leave-active {
+  position: absolute;
+}
+
+.fade-enter-from {
+  opacity: 0;
+}
+.fade-enter-active {
+  transition: opacity 300ms ease;
+}
