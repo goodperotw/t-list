@@ -28,7 +28,9 @@ function toggleMulti(
   value: string,
   emitUpdate: (v: string[]) => void
 ) {
-  if (current.includes(value)) {
+  if (value === '') {
+    emitUpdate([])
+  } else if (current.includes(value)) {
     emitUpdate(current.filter((x) => x !== value))
   } else {
     emitUpdate([...current, value])
@@ -37,10 +39,12 @@ function toggleMulti(
 
 function toggleSource(
   current: URLSource[],
-  value: URLSource,
+  value: URLSource | '',
   emitUpdate: (v: URLSource[]) => void
 ) {
-  if (current.includes(value)) {
+  if (value === '') {
+    emitUpdate([])
+  } else if (current.includes(value)) {
     emitUpdate(current.filter((x) => x !== value))
   } else {
     emitUpdate([...current, value])
@@ -58,6 +62,7 @@ function sourceLabel(s: URLSource): string {
   <div class="space-y-3">
     <div class="flex flex-wrap gap-3">
       <select
+        :value="selectedPlatforms.length ? selectedPlatforms[selectedPlatforms.length - 1] : ''"
         class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
         @change="
           toggleMulti(
@@ -66,11 +71,12 @@ function sourceLabel(s: URLSource): string {
             (v) => emit('update:selectedPlatforms', v)
           )
         ">
-        <option value="" disabled selected>遊戲平台</option>
+        <option value="">全部</option>
         <option v-for="p in platforms" :key="p" :value="p">{{ p }}</option>
       </select>
 
       <select
+        :value="selectedSources.length ? selectedSources[selectedSources.length - 1] : ''"
         class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
         @change="
           toggleSource(
@@ -79,11 +85,12 @@ function sourceLabel(s: URLSource): string {
             (v) => emit('update:selectedSources', v)
           )
         ">
-        <option value="" disabled selected>串流平台</option>
+        <option value="">全部</option>
         <option v-for="s in sources" :key="s" :value="s">{{ sourceLabel(s) }}</option>
       </select>
 
       <select
+        :value="selectedYears.length ? selectedYears[selectedYears.length - 1] : ''"
         class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
         @change="
           toggleMulti(
@@ -93,7 +100,7 @@ function sourceLabel(s: URLSource): string {
           )
         "
       >
-        <option value="" disabled selected>年份</option>
+        <option value="">全部</option>
         <option v-for="y in years" :key="y" :value="y">{{ y }}</option>
       </select>
 
