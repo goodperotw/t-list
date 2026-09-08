@@ -1,0 +1,8 @@
+ fetch("https://docs.google.com/spreadsheets/d/1O0UMu-EMvgm5JPCyKQk_R-5sQOK7DQSEWhi0G47J9YQ/export?format=csv&gid=0#gid=0").then(resp => resp.body).then(body => {
+| const reader = body.getReader()
+| const decoder = new TextDecoder()
+| reader.read().then(({done,value}) => {
+| if (done) return
+|
+| console.log(decoder.decode(value, {stream: true}))
+| })})
