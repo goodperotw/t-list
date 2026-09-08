@@ -6,6 +6,39 @@ import type { Stream, StreamURL, URLSource, URLType, FilterState } from '../type
 const SHEETS_CSV_URL =
   'https://docs.google.com/spreadsheets/d/1O0UMu-EMvgm5JPCyKQk_R-5sQOK7DQSEWhi0G47J9YQ/export?format=csv&gid=0'
 
+const CACHE_KEY = 't-list:stream-data'
+const CACHE_DURATION_MS = 30 * 60 * 1000
+
+interface CacheData {
+  savedAt: number
+  rows: string[][]
+}
+
+function loadCache(): CacheData | null {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY)
+    if (!raw) return null
+    const data = JSON.parse(raw) as CacheData
+    const age = Date.now() - data.savedAt
+    if (age > CACHE_DURATION_MS) {
+      localStorage.removeItem(CACHE_KEY)
+      return null
+    }
+    return data
+  } catch {
+    return null
+  }
+}
+
+function saveCache(rows: string[][]) {
+  try {
+    const data: CacheData = { savedAt: Date.now(), rows }
+    localStorage.setItem(CACHE_KEY, JSON.stringify(data))
+  } catch {
+    // ignore quota / private mode errors
+  }
+}
+
 function parseCSV(raw: string): string[][] {
   return raw
     .split('\n')
@@ -205,24 +238,38 @@ export function useStreamData() {
     searchQuery.value = ''
   }
 
+  function applyRows(rows: string[][]) {
+    const firstRowFirstCell = rows[0]?.[0] ?? ''
+    const headerRows = firstRowFirstCell.includes('標題') ? 2 : 1
+    const dataRows = rows.slice(headerRows)
+    rawData.value = dataRows.map(parseStreamRow).filter((s) => s.streamTitle)
+
+    fuse = new Fuse(rawData.value, {
+      keys: ['streamTitle'],
+      threshold: 0.4,
+      includeScore: true,
+    })
+  }
+
   async function fetchAndParse() {
     isLoading.value = true
     error.value = null
+
+    const cached = loadCache()
+    if (cached) {
+      applyRows(cached.rows)
+      isLoading.value = false
+    }
+
     try {
       const raw = await ky.get(SHEETS_CSV_URL).text()
       const rows = parseCSV(raw)
-      const firstRowFirstCell = rows[0]?.[0] ?? ''
-      const headerRows = firstRowFirstCell.includes('標題') ? 2 : 1
-      const dataRows = rows.slice(headerRows)
-      rawData.value = dataRows.map(parseStreamRow).filter((s) => s.streamTitle)
-
-      fuse = new Fuse(rawData.value, {
-        keys: ['streamTitle'],
-        threshold: 0.4,
-        includeScore: true,
-      })
+      applyRows(rows)
+      saveCache(rows)
     } catch (e) {
-      error.value = e instanceof Error ? e.message : 'Unknown error'
+      if (!cached) {
+        error.value = e instanceof Error ? e.message : 'Unknown error'
+      }
     } finally {
       isLoading.value = false
     }
