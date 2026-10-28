@@ -113,7 +113,7 @@ const panelClass =
     <div class="flex flex-wrap gap-3">
       <div class="relative">
         <button
-          :class="[dropdownBaseClass, dropdownStateClass(openDropdown === 'platform')]"
+          :class="[dropdownBaseClass, dropdownStateClass(openDropdown === 'platform'), 'cursor-pointer']"
           @click="toggleDropdown('platform')"
         >
           {{ platformLabel }}
@@ -141,7 +141,7 @@ const panelClass =
 
       <div class="relative">
         <button
-          :class="[dropdownBaseClass, dropdownStateClass(openDropdown === 'source')]"
+          :class="[dropdownBaseClass, dropdownStateClass(openDropdown === 'source'), 'cursor-pointer']"
           @click="toggleDropdown('source')"
         >
           {{ sourceLabelDrop }}
@@ -169,7 +169,7 @@ const panelClass =
 
       <div class="relative">
         <button
-          :class="[dropdownBaseClass, dropdownStateClass(openDropdown === 'year')]"
+          :class="[dropdownBaseClass, dropdownStateClass(openDropdown === 'year'), 'cursor-pointer']"
           @click="toggleDropdown('year')"
         >
           {{ yearLabel }}
@@ -196,7 +196,7 @@ const panelClass =
       </div>
 
       <button
-        class="rounded-lg border px-3 py-2 text-sm font-medium transition"
+        class="rounded-lg border px-3 py-2 text-sm font-medium transition cursor-pointer"
         :class="
           isPopular === true
             ? 'border-rose-300 bg-rose-100 text-rose-700'
@@ -208,7 +208,7 @@ const panelClass =
       </button>
 
       <button
-        class="rounded-lg border px-3 py-2 text-sm font-medium transition"
+        class="rounded-lg border px-3 py-2 text-sm font-medium transition cursor-pointer"
         :class="
           isCollab === true
             ? 'border-sky-300 bg-sky-100 text-sky-700'
