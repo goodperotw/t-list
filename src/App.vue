@@ -25,7 +25,7 @@ onMounted(fetchAndParse)
 
 <template>
   <div class="min-h-screen bg-gray-50">
-    <header class="border-b border-gray-200 bg-white">
+    <header class="border-b border-gray-200 bg-white sticky top-0">
       <div class="mx-auto max-w-6xl px-4 py-6">
         <h1 class="mb-5 text-2xl font-bold text-gray-900">直播清單</h1>
 
