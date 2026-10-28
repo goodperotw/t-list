@@ -22,7 +22,7 @@ function typeColor(type: string): string {
   if (type === '實況清單') return 'bg-amber-100 text-amber-700'
   return 'bg-gray-100 text-gray-500'
 }
-function thumbnail(urls: StreamURL[]): string | undefined {
+function parseYoutubeVideoID(urls: StreamURL[]): string | undefined {
   // twitch thumbnail can't be inferenced by url, only youtube offered here
   const firstYoutubeUrl = urls.find(url => url.url.includes('youtu'))?.url
   if (!firstYoutubeUrl) return undefined
@@ -42,6 +42,11 @@ function thumbnail(urls: StreamURL[]): string | undefined {
     const longUrlPattern = new RegExp(`(?<=v=)${youtubeVideoIdPattern}`)
     youtubeVideoID = firstYoutubeUrl.match(longUrlPattern)?.[0]
   }
+
+  return youtubeVideoID
+}
+function thumbnail(urls: StreamURL[]): string | undefined {
+  const youtubeVideoID = parseYoutubeVideoID(urls)
 
   return youtubeVideoID ? `https://i.ytimg.com/vi/${youtubeVideoID}/hqdefault.jpg` : undefined
 }
@@ -76,7 +81,14 @@ function thumbnail(urls: StreamURL[]): string | undefined {
     </div>
 
     <div v-if="stream.urls.length" class="flex flex-col gap-1.5">
-      <img v-if="thumbnail(stream.urls)" :src="thumbnail(stream.urls)">
+      <a
+        v-if="thumbnail(stream.urls)"
+        :href="`https://youtu.be/${parseYoutubeVideoID(stream.urls)}`"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img :src="thumbnail(stream.urls)" />
+      </a>
       <a
         v-for="(u, i) in stream.urls"
         :key="i"
