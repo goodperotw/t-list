@@ -7,7 +7,7 @@ const SHEETS_CSV_URL =
   'https://docs.google.com/spreadsheets/d/1O0UMu-EMvgm5JPCyKQk_R-5sQOK7DQSEWhi0G47J9YQ/export?format=csv&gid=0'
 
 const CACHE_KEY = 't-list:stream-data'
-const CACHE_DURATION_MS = 30 * 60 * 1000
+const CACHE_DURATION_MS = 3 * 60 * 1000
 
 interface CacheData {
   savedAt: number
