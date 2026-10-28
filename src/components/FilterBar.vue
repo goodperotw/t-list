@@ -204,7 +204,7 @@ const panelClass =
         "
         @click="emit('update:isPopular', isPopular === true ? null : true)"
       >
-        🔥 紅的
+        🔥 人氣
       </button>
 
       <button

@@ -41,7 +41,7 @@ function typeColor(type: string): string {
         v-if="stream.isPopular"
         class="rounded-full bg-rose-100 px-2.5 py-0.5 font-medium text-rose-700"
       >
-        🔥 紅的
+        🔥 人氣
       </span>
       <span
         v-if="stream.isCollab"

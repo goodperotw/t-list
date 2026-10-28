@@ -213,7 +213,7 @@ export function useStreamData() {
     if (filters.isPopular === true) {
       chips.push({
         key: 'popular',
-        label: '紅的',
+        label: '人氣',
         clear: () => { filters.isPopular = null },
       })
     }
