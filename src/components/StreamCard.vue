@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Stream } from '../types'
+import type { Stream, StreamURL } from '../types'
 import { ExternalLink } from '@lucide/vue'
 
 const props = defineProps<{ stream: Stream }>()
@@ -22,10 +22,10 @@ function typeColor(type: string): string {
   if (type === '實況清單') return 'bg-amber-100 text-amber-700'
   return 'bg-gray-100 text-gray-500'
 }
-function thumbnail(urls: Array<string>): string | null {
+function thumbnail(urls: StreamURL[]): string | undefined {
   // twitch thumbnail can't be inferenced by url, only youtube offered here
   const firstYoutubeUrl = urls.find(url => url.url.includes('youtu'))?.url
-  if (!firstYoutubeUrl) return null
+  if (!firstYoutubeUrl) return undefined
 
   const youtubeVideoIdPattern = '[0-9a-zA-Z_-]+'
   let youtubeVideoID
@@ -43,7 +43,7 @@ function thumbnail(urls: Array<string>): string | null {
     youtubeVideoID = firstYoutubeUrl.match(longUrlPattern)?.[0]
   }
 
-  return youtubeVideoID ? `https://i.ytimg.com/vi/${youtubeVideoID}/hqdefault.jpg` : null
+  return youtubeVideoID ? `https://i.ytimg.com/vi/${youtubeVideoID}/hqdefault.jpg` : undefined
 }
 </script>
 
