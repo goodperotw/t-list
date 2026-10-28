@@ -31,21 +31,21 @@ function typeColor(type: string): string {
     </h2>
 
     <div class="mb-3 flex flex-wrap items-center gap-2 text-sm">
-      <span class="rounded-full bg-gray-100 px-2.5 py-0.5 font-medium text-gray-700">
+      <span class="rounded-full bg-gray-100 px-2.5 py-0.5 font-medium text-gray-700 cursor-default select-none">
         {{ stream.platform }}
       </span>
-      <span class="rounded-full bg-gray-100 px-2.5 py-0.5 font-medium text-gray-700">
+      <span class="rounded-full bg-gray-100 px-2.5 py-0.5 font-medium text-gray-700 cursor-default select-none">
         {{ stream.streamedAt }}
       </span>
       <span
         v-if="stream.isPopular"
-        class="rounded-full bg-rose-100 px-2.5 py-0.5 font-medium text-rose-700"
+        class="rounded-full bg-rose-100 px-2.5 py-0.5 font-medium text-rose-700 cursor-default select-none"
       >
         🔥 人氣
       </span>
       <span
         v-if="stream.isCollab"
-        class="rounded-full bg-sky-100 px-2.5 py-0.5 font-medium text-sky-700"
+        class="rounded-full bg-sky-100 px-2.5 py-0.5 font-medium text-sky-700 cursor-default select-none"
       >
         🤝 聯動
       </span>
