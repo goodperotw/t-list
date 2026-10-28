@@ -22,7 +22,31 @@ function typeColor(type: string): string {
   if (type === '實況清單') return 'bg-amber-100 text-amber-700'
   return 'bg-gray-100 text-gray-500'
 }
+function thumbnail(urls: Array<string>): string | null {
+  // twitch thumbnail can't be inferenced by url, only youtube offered here
+  const firstYoutubeUrl = urls.find(url => url.url.includes('youtu'))?.url
+  if (!firstYoutubeUrl) return null
+
+  const youtubeVideoIdPattern = '[0-9a-zA-Z_-]+'
+  let youtubeVideoID
+  if (/youtu\.be/.test(firstYoutubeUrl)) {
+    // it might be youtube short firstYoutubeUrl
+    const shortUrlPattern = new RegExp(`(?<=be\/)${youtubeVideoIdPattern}`)
+    youtubeVideoID = firstYoutubeUrl.match(shortUrlPattern)?.[0]
+  } else if (/\/live\//.test(firstYoutubeUrl)) {
+    // it might be youtube live vod
+    const liveUrlPattern = new RegExp(`(?<=live\/)${youtubeVideoIdPattern}`)
+    youtubeVideoID = firstYoutubeUrl.match(liveUrlPattern)?.[0]
+  } else if (/youtube\.com/.test(firstYoutubeUrl)) {
+    // check if that's youtube standard video url
+    const longUrlPattern = new RegExp(`(?<=v=)${youtubeVideoIdPattern}`)
+    youtubeVideoID = firstYoutubeUrl.match(longUrlPattern)?.[0]
+  }
+
+  return youtubeVideoID ? `https://i.ytimg.com/vi/${youtubeVideoID}/hqdefault.jpg` : null
+}
 </script>
+
 
 <template>
   <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md">
@@ -52,6 +76,7 @@ function typeColor(type: string): string {
     </div>
 
     <div v-if="stream.urls.length" class="flex flex-col gap-1.5">
+      <img v-if="thumbnail(stream.urls)" :src="thumbnail(stream.urls)">
       <a
         v-for="(u, i) in stream.urls"
         :key="i"
