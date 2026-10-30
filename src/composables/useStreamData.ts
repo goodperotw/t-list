@@ -105,6 +105,7 @@ function parseStreamRow(cells: string[]): Stream {
     isPopular: isPopularRaw?.trim() === '√',
     isCollab: isCollabRaw?.trim() === '√',
     urls: urlCells.map(parseURL).filter((u): u is StreamURL => u !== null),
+    firstYouTubeURL: urlCells.find(cell => cell.includes('youtu'))
   }
 }
 

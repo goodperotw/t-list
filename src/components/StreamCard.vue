@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Stream, StreamURL } from '../types'
+import type { Stream } from '../types'
 import { ExternalLink } from '@lucide/vue'
 
 const props = defineProps<{ stream: Stream }>()
@@ -22,34 +22,30 @@ function typeColor(type: string): string {
   if (type === '實況清單') return 'bg-amber-100 text-amber-700'
   return 'bg-gray-100 text-gray-500'
 }
-function findFirstYoutubeUrl(urls: StreamURL[]): string | undefined {
-  return urls.find(url => url.url.includes('youtu'))?.url
-}
-function parseYoutubeVideoID(urls: StreamURL[]): string | undefined {
-  // twitch thumbnail can't be inferenced by url, only youtube offered here
-  const firstYoutubeUrl = findFirstYoutubeUrl(urls)
-  if (!firstYoutubeUrl) return undefined
+
+function parseYoutubeVideoID(youtubeURL?: string): string | undefined {
+  if (!youtubeURL) return undefined
 
   const youtubeVideoIdPattern = '[0-9a-zA-Z_-]+'
   let youtubeVideoID
-  if (/youtu\.be/.test(firstYoutubeUrl)) {
-    // it might be youtube short firstYoutubeUrl
+  if (/youtu\.be/.test(youtubeURL)) {
+    // it might be youtube short youtubeURL
     const shortUrlPattern = new RegExp(`(?<=be\/)${youtubeVideoIdPattern}`)
-    youtubeVideoID = firstYoutubeUrl.match(shortUrlPattern)?.[0]
-  } else if (/\/live\//.test(firstYoutubeUrl)) {
+    youtubeVideoID = youtubeURL.match(shortUrlPattern)?.[0]
+  } else if (/\/live\//.test(youtubeURL)) {
     // it might be youtube live vod
     const liveUrlPattern = new RegExp(`(?<=live\/)${youtubeVideoIdPattern}`)
-    youtubeVideoID = firstYoutubeUrl.match(liveUrlPattern)?.[0]
-  } else if (/youtube\.com/.test(firstYoutubeUrl)) {
+    youtubeVideoID = youtubeURL.match(liveUrlPattern)?.[0]
+  } else if (/youtube\.com/.test(youtubeURL)) {
     // check if that's youtube standard video url
     const longUrlPattern = new RegExp(`(?<=v=)${youtubeVideoIdPattern}`)
-    youtubeVideoID = firstYoutubeUrl.match(longUrlPattern)?.[0]
+    youtubeVideoID = youtubeURL.match(longUrlPattern)?.[0]
   }
 
   return youtubeVideoID
 }
-function thumbnail(urls: StreamURL[]): string | undefined {
-  const youtubeVideoID = parseYoutubeVideoID(urls)
+function thumbnail(stream: Stream): string | undefined {
+  const youtubeVideoID = parseYoutubeVideoID(stream.firstYouTubeURL)
 
   return youtubeVideoID ? `https://i.ytimg.com/vi/${youtubeVideoID}/hqdefault.jpg` : undefined
 }
@@ -85,12 +81,12 @@ function thumbnail(urls: StreamURL[]): string | undefined {
 
     <div v-if="stream.urls.length" class="flex flex-col gap-1.5">
       <a
-        v-if="thumbnail(stream.urls)"
-        :href="`${findFirstYoutubeUrl(stream.urls)}`"
+        v-if="stream.firstYouTubeURL"
+        :href="stream.firstYouTubeURL"
         target="_blank"
         rel="noopener noreferrer"
       >
-        <img :src="thumbnail(stream.urls)" />
+        <img :src="thumbnail(stream)" />
       </a>
       <a
         v-for="(u, i) in stream.urls"
