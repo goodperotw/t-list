@@ -17,6 +17,7 @@ export interface Stream {
   isCollab: boolean
   urls: StreamURL[]
   firstYouTubeURL?: string
+  thumbnailURL?: string
 }
 
 export interface FilterState {

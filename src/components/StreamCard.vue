@@ -23,32 +23,6 @@ function typeColor(type: string): string {
   return 'bg-gray-100 text-gray-500'
 }
 
-function parseYoutubeVideoID(youtubeURL?: string): string | undefined {
-  if (!youtubeURL) return undefined
-
-  const youtubeVideoIdPattern = '[0-9a-zA-Z_-]+'
-  let youtubeVideoID
-  if (/youtu\.be/.test(youtubeURL)) {
-    // it might be youtube short youtubeURL
-    const shortUrlPattern = new RegExp(`(?<=be\/)${youtubeVideoIdPattern}`)
-    youtubeVideoID = youtubeURL.match(shortUrlPattern)?.[0]
-  } else if (/\/live\//.test(youtubeURL)) {
-    // it might be youtube live vod
-    const liveUrlPattern = new RegExp(`(?<=live\/)${youtubeVideoIdPattern}`)
-    youtubeVideoID = youtubeURL.match(liveUrlPattern)?.[0]
-  } else if (/youtube\.com/.test(youtubeURL)) {
-    // check if that's youtube standard video url
-    const longUrlPattern = new RegExp(`(?<=v=)${youtubeVideoIdPattern}`)
-    youtubeVideoID = youtubeURL.match(longUrlPattern)?.[0]
-  }
-
-  return youtubeVideoID
-}
-function thumbnail(stream: Stream): string | undefined {
-  const youtubeVideoID = parseYoutubeVideoID(stream.firstYouTubeURL)
-
-  return youtubeVideoID ? `https://i.ytimg.com/vi/${youtubeVideoID}/hqdefault.jpg` : undefined
-}
 </script>
 
 
@@ -86,7 +60,7 @@ function thumbnail(stream: Stream): string | undefined {
         target="_blank"
         rel="noopener noreferrer"
       >
-        <img :src="thumbnail(stream)" />
+        <img :src="stream.thumbnailURL" />
       </a>
       <a
         v-for="(u, i) in stream.urls"

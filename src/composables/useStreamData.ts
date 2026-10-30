@@ -96,8 +96,38 @@ function parseURL(rawUrl: string): StreamURL | null {
   return { title, url: trimmed, source, type }
 }
 
+function parseYoutubeVideoID(youtubeURL?: string): string | undefined {
+  if (!youtubeURL) return undefined
+
+  const youtubeVideoIdPattern = '[0-9a-zA-Z_-]+'
+  let youtubeVideoID
+  if (/youtu\.be/.test(youtubeURL)) {
+    // it might be youtube short youtubeURL
+    const shortUrlPattern = new RegExp(`(?<=be\/)${youtubeVideoIdPattern}`)
+    youtubeVideoID = youtubeURL.match(shortUrlPattern)?.[0]
+  } else if (/\/live\//.test(youtubeURL)) {
+    // it might be youtube live vod
+    const liveUrlPattern = new RegExp(`(?<=live\/)${youtubeVideoIdPattern}`)
+    youtubeVideoID = youtubeURL.match(liveUrlPattern)?.[0]
+  } else if (/youtube\.com/.test(youtubeURL)) {
+    // check if that's youtube standard video url
+    const longUrlPattern = new RegExp(`(?<=v=)${youtubeVideoIdPattern}`)
+    youtubeVideoID = youtubeURL.match(longUrlPattern)?.[0]
+  }
+
+  return youtubeVideoID
+}
+
+
+function calcThumbnail(url?: string): string | undefined {
+  const youtubeVideoID = parseYoutubeVideoID(url)
+
+  return youtubeVideoID ? `https://i.ytimg.com/vi/${youtubeVideoID}/hqdefault.jpg` : undefined
+}
+
 function parseStreamRow(cells: string[]): Stream {
   const [streamTitle, platform, streamedAt, isPopularRaw, isCollabRaw, ...urlCells] = cells
+  const firstYouTubeURL = urlCells.find(cell => cell.includes('youtu'))
   return {
     streamTitle: streamTitle?.trim() ?? '',
     platform: platform?.trim() ?? '',
@@ -105,7 +135,8 @@ function parseStreamRow(cells: string[]): Stream {
     isPopular: isPopularRaw?.trim() === '√',
     isCollab: isCollabRaw?.trim() === '√',
     urls: urlCells.map(parseURL).filter((u): u is StreamURL => u !== null),
-    firstYouTubeURL: urlCells.find(cell => cell.includes('youtu'))
+    firstYouTubeURL: firstYouTubeURL,
+    thumbnailURL: calcThumbnail(firstYouTubeURL)
   }
 }
 
